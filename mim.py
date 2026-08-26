@@ -464,6 +464,9 @@ class MIM(nn.Module):
         Returns:
             gen_imgs: predicted frames [batch, total_length-1, channel, height, width]
         """
+        assert frames.dim() == 5 and frames.shape[1] >= self.total_length \
+            and frames.shape[2] == self.input_dims, \
+            f"expect [B,>={self.total_length},{self.input_dims},H,W], got {tuple(frames.shape)}"
         batch_size = frames.shape[0]
         device = frames.device
 
