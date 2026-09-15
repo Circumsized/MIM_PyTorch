@@ -18,7 +18,7 @@ jobs:
       - name: Install PyTorch (CPU)
         run: pip install torch --index-url https://download.pytorch.org/whl/cpu
       - name: Install test dependencies
-        run: pip install pytest ruff numpy
+        run: pip install -r requirements.txt pytest ruff
       - name: Lint
         run: ruff check .
       - name: Unit tests
