@@ -5,6 +5,7 @@ mean a regression slipped back in.
 """
 
 import argparse
+
 import numpy as np
 import pytest
 import torch
@@ -13,7 +14,6 @@ import torch.nn as nn
 import train
 from dataset import MovingMNIST, get_dataloader
 from mim import MIM
-
 
 # ---------------------------------------------------------------------------
 # CLI argument validation: modulo-by-zero and empty-loop foot-guns

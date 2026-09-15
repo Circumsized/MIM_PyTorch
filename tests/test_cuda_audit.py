@@ -5,14 +5,15 @@ Covers: MIMS/MIMN ct_weight chunk equivalence (bitwise vs the old
 survives ``python -O``, pin_memory plumbing, and inference_mode paths.
 """
 
-import numpy as np
 import os
+
+import numpy as np
 import pytest
 import torch
 
-from dataset import get_dataloader, MovingMNIST
-from mim import MIM, MIMS, MIMN, sequence_to_channels_last
 import train
+from dataset import MovingMNIST, get_dataloader
+from mim import MIM, MIMN, MIMS, sequence_to_channels_last
 
 
 def test_sequence_channels_last_slices():

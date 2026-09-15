@@ -10,8 +10,7 @@ import math
 import torch
 import torch.nn as nn
 
-from mim import MIM, MIMS, MIMN, MIMBlock
-
+from mim import MIM, MIMN, MIMS, MIMBlock
 
 # ---------------------------------------------------------------------------
 # BUG-3 (fixed): MIMN.oc_weight must be a trainable nn.Parameter.

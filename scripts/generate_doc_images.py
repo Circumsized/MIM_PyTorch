@@ -26,7 +26,7 @@ FONT = "'Segoe UI','Microsoft YaHei','PingFang SC','Noto Sans SC',sans-serif"
 TITLE_SIZE = 20
 HEAD_SIZE = 14
 BODY_SIZE = 12.5
-LINE_H = 24          # generous vertical rhythm between body lines
+LINE_H = 24  # generous vertical rhythm between body lines
 
 
 def esc(t):
@@ -37,7 +37,7 @@ def svg_open(w, h):
     return (
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{w}" height="{h}" '
         f'viewBox="0 0 {w} {h}" font-family="{FONT}">'
-        f'<defs>'
+        f"<defs>"
         f'<marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" '
         f'markerWidth="7" markerHeight="7" orient="auto-start-reverse">'
         f'<path d="M0,0 L10,5 L0,10 z" fill="{ARROW}"/></marker>'
@@ -47,7 +47,7 @@ def svg_open(w, h):
         f'<marker id="arB" viewBox="0 0 10 10" refX="9" refY="5" '
         f'markerWidth="7" markerHeight="7" orient="auto-start-reverse">'
         f'<path d="M0,0 L10,5 L0,10 z" fill="{ACCENT2}"/></marker>'
-        f'</defs>'
+        f"</defs>"
         f'<rect width="{w}" height="{h}" fill="{BG}"/>'
     )
 
@@ -78,8 +78,7 @@ def vcenter(x, y, w, h, head, lines):
     out = []
     block_h = HEAD_SIZE + 8 + LINE_H * len(lines)
     start = y + (h - block_h) / 2 + HEAD_SIZE
-    out.append(text(x + w / 2, start, head, size=HEAD_SIZE,
-                    fill=INK, weight="700"))
+    out.append(text(x + w / 2, start, head, size=HEAD_SIZE, fill=INK, weight="700"))
     cy = start + 10
     for ln in lines:
         cy += LINE_H
@@ -114,19 +113,50 @@ def fig_architecture():
     s = [svg_open(W, H), title("MIM_PyTorch 架构概览", W / 2, 46)]
 
     cols = [
-        ("数据集层", "dataset.py",
-         ["MovingMNIST", "RadarEcho", "_normalize_to_unit", "get_dataloader"]),
-        ("训练引擎", "train.py",
-         ["_validate_args", "train_one_epoch", "evaluate",
-          "AsyncCheckpointSaver", "_load_resume_checkpoint"]),
-        ("模型核心", "mim.py",
-         ["TensorLayerNorm", "SpatioTemporalLSTMCell", "MIMS",
-          "MIMBlock", "MIMN", "MIM"]),
-        ("推理引擎", "inference.py",
-         ["infer_architecture", "load_model", "predict",
-          "CUDAGraphRunner", "benchmark"]),
-        ("评估与可视化", "metrics + visualization",
-         ["5 项评估指标", "TBLogger", "EpochProgress", "make_video_grid"]),
+        (
+            "数据集层",
+            "dataset.py",
+            ["MovingMNIST", "RadarEcho", "_normalize_to_unit", "get_dataloader"],
+        ),
+        (
+            "训练引擎",
+            "train.py",
+            [
+                "_validate_args",
+                "train_one_epoch",
+                "evaluate",
+                "AsyncCheckpointSaver",
+                "_load_resume_checkpoint",
+            ],
+        ),
+        (
+            "模型核心",
+            "mim.py",
+            [
+                "TensorLayerNorm",
+                "SpatioTemporalLSTMCell",
+                "MIMS",
+                "MIMBlock",
+                "MIMN",
+                "MIM",
+            ],
+        ),
+        (
+            "推理引擎",
+            "inference.py",
+            [
+                "infer_architecture",
+                "load_model",
+                "predict",
+                "CUDAGraphRunner",
+                "benchmark",
+            ],
+        ),
+        (
+            "评估与可视化",
+            "metrics + visualization",
+            ["5 项评估指标", "TBLogger", "EpochProgress", "make_video_grid"],
+        ),
     ]
 
     margin, gap = 40, 22
@@ -138,10 +168,8 @@ def fig_architecture():
         s.append(rect(x, by, bw, bh))
         out = []
         top = by + 32
-        out.append(text(x + bw / 2, top, head, size=HEAD_SIZE,
-                        fill=INK, weight="700"))
-        out.append(text(x + bw / 2, top + 20, sub, size=BODY_SIZE - 1,
-                        fill=ACCENT))
+        out.append(text(x + bw / 2, top, head, size=HEAD_SIZE, fill=INK, weight="700"))
+        out.append(text(x + bw / 2, top + 20, sub, size=BODY_SIZE - 1, fill=ACCENT))
         cy = top + 20 + 26
         for ln in items:
             out.append(text(x + bw / 2, cy, ln, size=BODY_SIZE, fill=MUTED))
@@ -154,8 +182,16 @@ def fig_architecture():
     bw2, bh2 = 460, 88
     bx2, by2 = (W - bw2) / 2, 470
     s.append(rect(bx2, by2, bw2, bh2, fill=PANEL_ALT))
-    s.append(vcenter(bx2, by2, bw2, bh2, "依赖与配置",
-                     ["requirements.txt / CLI args / checkpoint"]))
+    s.append(
+        vcenter(
+            bx2,
+            by2,
+            bw2,
+            bh2,
+            "依赖与配置",
+            ["requirements.txt / CLI args / checkpoint"],
+        )
+    )
     s.append(arrow(W / 2, by + bh + 3, W / 2, by2 - 3, marker="arA"))
 
     write("readme_architecture_overview.svg", "".join(s))
@@ -188,18 +224,25 @@ def fig_dataflow():
     ib_x = margin + 2 * (bw + gap)
     ib_y, ib_h = 360, 130
     s.append(rect(ib_x, ib_y, bw, ib_h, fill=PANEL_WARM))
-    s.append(vcenter(ib_x, ib_y, bw, ib_h, "推理路径",
-                     ["predict() → .npy 输出"]))
-    s.append(arrow(ib_x + bw / 2, by + bh + 4,
-                   ib_x + bw / 2, ib_y - 4, marker="arB"))
+    s.append(vcenter(ib_x, ib_y, bw, ib_h, "推理路径", ["predict() → .npy 输出"]))
+    s.append(arrow(ib_x + bw / 2, by + bh + 4, ib_x + bw / 2, ib_y - 4, marker="arB"))
 
     # state machine strip
     sx, sy, sw, sh = 110, 540, W - 220, 96
     s.append(rect(sx, sy, sw, sh, fill=PANEL_ALT))
-    s.append(vcenter(
-        sx, sy, sw, sh, "状态机",
-        ["[新建] → [训练中] → [已保存 checkpoint] → [恢复训练]",
-         "[Eval 中] → [Resume 校验] → [架构一致性检查]"]))
+    s.append(
+        vcenter(
+            sx,
+            sy,
+            sw,
+            sh,
+            "状态机",
+            [
+                "[新建] → [训练中] → [已保存 checkpoint] → [恢复训练]",
+                "[Eval 中] → [Resume 校验] → [架构一致性检查]",
+            ],
+        )
+    )
 
     write("readme_dataflow_state_machine.svg", "".join(s))
 
@@ -243,12 +286,16 @@ def fig_paper_overview():
     c3 = margin + 2 * (bw + gap) + bw / 2
     t2 = xs2[0] + bw2 / 2
     t3 = xs2[1] + bw2 / 2
-    s.append(f'<path d="M {c2:.1f} {by + bh + 4} V {by2 - 44:.1f} '
-             f'H {t2:.1f} V {by2 - 4:.1f}" fill="none" stroke="{ARROW}" '
-             f'stroke-width="2" marker-end="url(#arA)"/>')
-    s.append(f'<path d="M {c3:.1f} {by + bh + 4} V {by2 - 44:.1f} '
-             f'H {t3:.1f} V {by2 - 4:.1f}" fill="none" stroke="{ARROW}" '
-             f'stroke-width="2" marker-end="url(#arA)"/>')
+    s.append(
+        f'<path d="M {c2:.1f} {by + bh + 4} V {by2 - 44:.1f} '
+        f'H {t2:.1f} V {by2 - 4:.1f}" fill="none" stroke="{ARROW}" '
+        f'stroke-width="2" marker-end="url(#arA)"/>'
+    )
+    s.append(
+        f'<path d="M {c3:.1f} {by + bh + 4} V {by2 - 44:.1f} '
+        f'H {t3:.1f} V {by2 - 4:.1f}" fill="none" stroke="{ARROW}" '
+        f'stroke-width="2" marker-end="url(#arA)"/>'
+    )
 
     write("paper_analysis_overview.svg", "".join(s))
 
@@ -259,9 +306,15 @@ def fig_logic_chain():
     s = [svg_open(W, H), title("密码表逻辑链与阅读路径", W / 2, 46)]
 
     chain = [
-        ("SPL", "问题"), ("CPL", "批评"), ("GAP", "空白"),
-        ("RAT", "理论"), ("ROF", "目标"), ("WTD/WTDD", "方法"),
-        ("ROFD", "发现"), ("RCL/RTC", "定位"), ("POC/RFW/RPP", "局限"),
+        ("SPL", "问题"),
+        ("CPL", "批评"),
+        ("GAP", "空白"),
+        ("RAT", "理论"),
+        ("ROF", "目标"),
+        ("WTD/WTDD", "方法"),
+        ("ROFD", "发现"),
+        ("RCL/RTC", "定位"),
+        ("POC/RFW/RPP", "局限"),
     ]
     margin, gap = 40, 14
     n = len(chain)
@@ -281,10 +334,19 @@ def fig_logic_chain():
 
     sx, sy, sw, sh = 80, 300, W - 160, 96
     s.append(rect(sx, sy, sw, sh, fill=PANEL_ALT))
-    s.append(vcenter(
-        sx, sy, sw, sh, "阅读路径建议",
-        ["精读顺序：SPL → CPL → GAP → RAT → ROF → WTD/WTDD → ROFD "
-         "→ RCL/RTC → POC/RFW/RPP"]))
+    s.append(
+        vcenter(
+            sx,
+            sy,
+            sw,
+            sh,
+            "阅读路径建议",
+            [
+                "精读顺序：SPL → CPL → GAP → RAT → ROF → WTD/WTDD → ROFD "
+                "→ RCL/RTC → POC/RFW/RPP"
+            ],
+        )
+    )
 
     write("paper_analysis_logic_chain.svg", "".join(s))
 

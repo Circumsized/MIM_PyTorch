@@ -10,8 +10,7 @@ import torch
 import train
 from dataset import MovingMNIST, get_dataloader
 from mim import MIM
-from visualization import EpochProgress, TBLogger, _TB_AVAILABLE, make_video_grid
-
+from visualization import _TB_AVAILABLE, EpochProgress, TBLogger, make_video_grid
 
 HIDDEN = [8, 8]
 INPUT_LENGTH = 3
@@ -19,7 +18,7 @@ TOTAL_LENGTH = 6
 
 
 def _make_namespace(**kw):
-    base = dict(
+    base = dict(  # noqa: C408 - keeps the keyword form readable for overrides
         dataset="mnist",
         batch_size=2,
         total_length=TOTAL_LENGTH,

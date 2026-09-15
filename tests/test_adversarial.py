@@ -21,7 +21,6 @@ import train
 from dataset import _normalize_to_unit
 from inference import infer_architecture
 
-
 # ---------------------------------------------------------------------------
 # A1: _normalize_to_unit must reject non-finite float data (was silently
 #     passed through, poising training since NaN/Inf comparisons are False).
@@ -82,7 +81,7 @@ def test_generate_ss_bool_rejects_negative_ss_length():
 
 
 def test_snapshot_rejects_module():
-    with pytest.raises(TypeError, match="nn.Module"):
+    with pytest.raises(TypeError, match=r"nn\.Module"):
         train.AsyncCheckpointSaver._snapshot({"mod": nn.Linear(2, 2)})
 
 
@@ -96,9 +95,8 @@ def test_predict_lock_is_reentrant():
     # threading.RLock is a factory, not a type; compare against the actual
     # type of a freshly-created RLock. A plain Lock would deadlock here.
     assert type(inference._predict_lock) is type(threading.RLock())
-    with inference._predict_lock:
-        with inference._predict_lock:
-            pass  # must not deadlock; would on a plain threading.Lock
+    with inference._predict_lock, inference._predict_lock:
+        pass  # must not deadlock; would on a plain threading.Lock
 
 
 # ---------------------------------------------------------------------------
@@ -274,7 +272,7 @@ def test_predict_rejects_torch_compiled_model():
 
     model = MIM(1, 1, [1, 1, 16, 16], hidden_dim=[4, 4], total_length=4, input_length=2)
     compiled = torch.compile(model, backend="eager")
-    with pytest.raises(ValueError, match="torch.compile"):
+    with pytest.raises(ValueError, match=r"torch\.compile"):
         inference.predict(compiled, torch.rand(1, 2, 1, 16, 16), horizon=1)
 
 

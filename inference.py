@@ -330,9 +330,7 @@ def load_input(path, input_length):
     arr = np.load(str(path))
     if arr.ndim == 3:  # [T, H, W]
         arr = arr[:, None, :, :]
-    elif arr.ndim == 4:  # [T, C, H, W]
-        pass
-    elif arr.ndim == 5:  # [B, T, C, H, W]
+    elif arr.ndim == 4 or arr.ndim == 5:  # [T, C, H, W]
         pass
     else:
         raise ValueError(f"unsupported input ndim {arr.ndim}")

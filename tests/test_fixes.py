@@ -9,9 +9,9 @@ Covers:
   * M5   - evaluate skips batches with non-finite metrics
 """
 
+import concurrent.futures as cf
 import pickle
 import threading
-import concurrent.futures as cf
 
 import numpy as np
 import pytest
@@ -21,7 +21,6 @@ from dataset import MovingMNIST, RadarEcho
 from inference import predict
 from mim import MIM
 from train import _check_resume_args, evaluate
-
 
 HIDDEN = [8, 8]
 IN_LEN, TOTAL = 3, 6
@@ -182,7 +181,7 @@ def test_cuda_graph_runner_has_lock_attribute(tmp_path):
     # exposes the class and its expected lock field.
     from inference import CUDAGraphRunner
 
-    assert hasattr(CUDAGraphRunner, "__call__")
+    assert callable(CUDAGraphRunner)
     # Confirm the module has its lock guard.
     import inference
 

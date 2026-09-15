@@ -65,7 +65,7 @@ class TensorLayerNorm(nn.Module):
     """
 
     def __init__(self, num_features, eps=1e-5):
-        super(TensorLayerNorm, self).__init__()
+        super().__init__()
         self.num_features = num_features
         self.eps = eps
         self.gamma = nn.Parameter(torch.ones(1, num_features, 1, 1))
@@ -92,7 +92,7 @@ class SpatioTemporalLSTMCell(nn.Module):
         forget_bias=1.0,
         tln=False,
     ):
-        super(SpatioTemporalLSTMCell, self).__init__()
+        super().__init__()
 
         _validate_cell_params(in_channel, num_hidden, kernel_size, in_shape)
         self.in_channel = in_channel
@@ -216,7 +216,7 @@ class MIMS(nn.Module):
         forget_bias=1.0,
         tln=False,
     ):
-        super(MIMS, self).__init__()
+        super().__init__()
 
         _validate_cell_params(in_channel, num_hidden, kernel_size, in_shape)
         self.in_channel = in_channel
@@ -337,7 +337,7 @@ class MIMBlock(nn.Module):
         forget_bias=1.0,
         tln=False,
     ):
-        super(MIMBlock, self).__init__()
+        super().__init__()
         _validate_cell_params(in_channel, num_hidden, kernel_size, in_shape)
         self.in_channel = in_channel
         self.num_hidden = num_hidden
@@ -478,7 +478,7 @@ class MIMN(nn.Module):
         forget_bias=1.0,
         tln=False,
     ):
-        super(MIMN, self).__init__()
+        super().__init__()
         _validate_cell_params(in_channel, num_hidden, kernel_size, in_shape)
         self.in_channel = in_channel
         self.num_hidden = num_hidden
@@ -619,7 +619,7 @@ class MIM(nn.Module):
         in train.py) to trade ~1 extra forward pass per step for O(1) instead
         of O(T) activation memory across the temporal loop.
         """
-        super(MIM, self).__init__()
+        super().__init__()
 
         if hidden_dim is None:
             hidden_dim = [64, 64, 64, 64]

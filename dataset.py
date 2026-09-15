@@ -3,7 +3,7 @@ import threading
 
 import numpy as np
 import torch
-from torch.utils.data import Dataset, DataLoader
+from torch.utils.data import DataLoader, Dataset
 
 
 def _load_split(data_path, split):
@@ -254,13 +254,13 @@ def get_dataloader(
         raise ValueError(f"prefetch_factor must be >= 1, got {prefetch_factor}")
     if pin_memory is None:
         pin_memory = torch.cuda.is_available()
-    kwargs = dict(
-        batch_size=batch_size,
-        shuffle=shuffle,
-        num_workers=num_workers,
-        pin_memory=pin_memory,
-        drop_last=drop_last,
-    )
+    kwargs = {
+        "batch_size": batch_size,
+        "shuffle": shuffle,
+        "num_workers": num_workers,
+        "pin_memory": pin_memory,
+        "drop_last": drop_last,
+    }
     if num_workers > 0:
         kwargs["persistent_workers"] = True
         kwargs["prefetch_factor"] = prefetch_factor

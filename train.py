@@ -10,7 +10,7 @@ import torch
 import torch.nn as nn
 
 from dataset import MovingMNIST, RadarEcho, get_dataloader, recommend_num_workers
-from metrics import batch_mse, batch_psnr, batch_ssim, batch_mae
+from metrics import batch_mae, batch_mse, batch_psnr, batch_ssim
 from mim import MIM
 from visualization import EpochProgress, TBLogger
 
@@ -439,15 +439,14 @@ def _check_resume_args(checkpoint, args):
 
     ckpt_hidden = _normalise_hidden(ckpt_args.get("hidden_dim"))
     cur_hidden = _normalise_hidden(getattr(args, "hidden_dim", None))
-    if ckpt_hidden is not None and cur_hidden is not None:
-        if ckpt_hidden != cur_hidden:
-            raise ValueError(
-                f"resume checkpoint was trained with --hidden_dim="
-                f"{ckpt_args.get('hidden_dim')} but current CLI passes "
-                f"{getattr(args, 'hidden_dim', None)}; hidden-state "
-                f"layout would silently change. Match the value or "
-                f"drop --resume"
-            )
+    if ckpt_hidden is not None and cur_hidden is not None and ckpt_hidden != cur_hidden:
+        raise ValueError(
+            f"resume checkpoint was trained with --hidden_dim="
+            f"{ckpt_args.get('hidden_dim')} but current CLI passes "
+            f"{getattr(args, 'hidden_dim', None)}; hidden-state "
+            f"layout would silently change. Match the value or "
+            f"drop --resume"
+        )
 
 
 def get_scheduled_sampling_prob(epoch, args):

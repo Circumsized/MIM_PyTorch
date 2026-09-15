@@ -1,7 +1,7 @@
 import pytest
 import torch
 
-from metrics import batch_mse, batch_psnr, batch_ssim, batch_mae, csi_score
+from metrics import batch_mae, batch_mse, batch_psnr, batch_ssim, csi_score
 
 
 def test_psnr_identical_images():
