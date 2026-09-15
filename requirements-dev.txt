@@ -1,0 +1,11 @@
+-r requirements.txt
+
+# Testing
+pytest>=8,<9
+hypothesis>=6,<7
+
+# Linting / static analysis
+ruff>=0.6
+
+# Security audit
+pip-audit>=2
