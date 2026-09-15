@@ -1,12 +1,7 @@
-"""Generate pure-SVG diagrams (manual <text> layout) for the docs.
+"""Generate the SVG diagrams used in README.md and paper_analysis.md.
 
-Design goals requested by the user:
-  * text always inside its box (manual line grid, no auto-wrap surprises)
-  * generous line spacing (no crowding / overlap)
-  * regular, aligned arrows
-
-No foreignObject, no matplotlib: every element is a plain SVG primitive so
-any renderer (GitHub, VS Code, browser, pandoc) draws it identically.
+Each figure is laid out with plain SVG primitives and fixed text grids, so
+the output renders the same in GitHub, VS Code and browsers.
 """
 
 import os
