@@ -1,7 +1,7 @@
 -r requirements.txt
 
 # Testing
-pytest>=8,<9
+pytest>=9.0.3
 hypothesis>=6,<7
 
 # Linting / static analysis
@@ -9,3 +9,6 @@ ruff>=0.6
 
 # Security audit
 pip-audit>=2
+
+# Build backend (kept current to avoid known CVEs)
+setuptools>=83.0.0

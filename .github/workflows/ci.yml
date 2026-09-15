@@ -25,4 +25,4 @@ jobs:
       - name: Unit tests
         run: pytest tests/ -v
       - name: Dependency vulnerability scan
-        run: pip-audit
+        run: pip-audit -r requirements.txt -r requirements-dev.txt
