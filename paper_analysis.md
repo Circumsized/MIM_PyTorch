@@ -12,6 +12,32 @@
 
 ---
 
+## 论文总览
+
+| 维度 | 内容 |
+|---|---|
+| 研究问题 | 高阶非平稳时空动态下的长期视频帧预测 |
+| 核心方法 | MIM-N + MIM-S 级联记忆差分 + 多层堆叠高阶平稳化 |
+| 理论依据 | Cramér 分解 + ARIMA 差分思想 + difference-stationary 假设 |
+| 实验规模 | 4 个数据集（Moving MNIST、Radar Echo、TaxiBJ、KTH Action） |
+| 主要结论 | 在多个基准上取得 SOTA，尤其擅长长期预测与高阶非平稳建模 |
+| 关键局限 | 计算成本较高、理论保证依赖经验性假设、部分对比覆盖不足 |
+
+**阅读路径建议：**
+
+```text
+精读顺序：
+1. 问题定义（SPL） → 2. 现状批评（CPL） → 3. 文献缺口（GAP）
+4. 理论依据（RAT） → 5. 研究目标（ROF） → 6. 方法设计（WTD/WTDD）
+7. 实验证据（POC） → 8. 学术定位（RCL/RTC） → 9. 局限与展望（POC/RFW/RPP）
+```
+
+**论文总览图：**
+
+![paper_analysis_overview](assets/paper_analysis_overview.svg)
+
+---
+
 ## 一、菲利普阅读密码表总矩阵（13 项 × 5 列：原文摘要 + 深度分析 + 批判性评注）
 
 ### 1.1 论文核心问题与立论基础类密码（SPL, CPL, GAP, RAT, ROF, POC）
@@ -69,6 +95,10 @@ SPL (问题) → CPL (批评) → GAP (空白)
 3. **批判性评价时**：结合 RCL（一致性）和 RTC（创新性）判断论文的学术贡献。
 4. **寻找新方向时**：从 POC → RFW → RPP 中识别未解决的科学问题。
 
+**逻辑链可视化：**
+
+![paper_analysis_logic_chain](assets/paper_analysis_logic_chain.svg)
+
 ---
 
 ## 二、密码表矩阵的深度补充：分模块详解
@@ -79,7 +109,7 @@ SPL (问题) → CPL (批评) → GAP (空白)
 |---|---|---|---|---|---|
 | §3.1 | MIM 块 | WTD | "Two cascaded temporal memory recurrent modules are designed to replace the temporal forget gate f_t in ST-LSTM." | 用 MIM-N + MIM-S 级联替代 ST-LSTM 的 forget gate | 设计核心，但 80% 饱和度的实验数据仅来自 PredRNN |
 | §3.1 | MIM-N | WTDD | "The first module... is used to capture the non-stationary variations based on the differencing" | 输入差分信号，输出 $\mathcal{D}_t^l$；初始化 ±0.001 | 经验性初始化，未给理论依据 |
-| §3.1 | MIM-S | WTDD | "The other recurrent module... to capture the approximately stationary variations" | 输入 $\mathcal{D}_t^l + \mathcal{C}_{t-1}^l$，输出 $\mathcal{T}_t^l$ | 级联依赖 MIM-N 收敛 |
+| §3.1 | MIM-S | WTDD | "The other recurrent module... is used to capture the approximately stationary variations" | 输入 $\mathcal{D}_t^l + \mathcal{C}_{t-1}^l$，输出 $\mathcal{T}_t^l$ | 级联依赖 MIM-N 收敛 |
 | §3.2 | MIM 网络 | WTD | "a new RNN architecture, which interlinks multiple MIM blocks with diagonal state connections" | 多层 MIM 块 + zigzag 记忆流 + diagonal state connections | 状态空间从 2 扩到 5n-2，显存增加 2.5x |
 | §3.3 | 训练策略 | WTDD | "we use scheduled sampling for better long-term prediction" | 线性调度 $p_t = 1 - (t - t_{start})/(t_{end} - t_{start})$ | 简单但可能不是最优调度 |
 | §3.3 | 反向传播 | WTDD | "the whole MIM network is end-to-end trainable" | 通过时间的 BPTT + 多层 MIM 块的反向传播 | 深层堆叠可能梯度消失 |

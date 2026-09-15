@@ -166,16 +166,34 @@ python inference.py \
 
 ## 输入数据格式
 
-| 维度格式 | 含义 | 适用场景 |
-|---|---|---|
-| `[T, H, W]` | 时间 × 高 × 宽 | 灰度视频帧序列 |
-| `[T, C, H, W]` | 时间 × 通道 × 高 × 宽 | 多通道帧序列 |
-| `[B, T, C, H, W]` | 批 × 时间 × 通道 × 高 × 宽 | 批量推理 |
+| 维度格式 | 含义 | 适用场景 | 示例形状 |
+|---|---|---|---|
+| `[T, H, W]` | 时间 × 高 × 宽 | 灰度视频帧序列 | `(20, 64, 64)` |
+| `[T, C, H, W]` | 时间 × 通道 × 高 × 宽 | 多通道帧序列 | `(20, 3, 64, 64)` |
+| `[B, T, C, H, W]` | 批 × 时间 × 通道 × 高 × 宽 | 批量推理 | `(8, 20, 1, 64, 64)` |
 
 **支持 dtype:**
 
 - `uint8`: 自动归一化到 `[0, 1]`
 - `float16/32/64`: 需在 `[0, 1]` 范围内
+
+**数据加载可视化:**
+
+```text
+.npy / .npz
+    │
+    ▼
+_load_split() ──▶ mmap(.npy) / 完整读取(.npz)
+    │
+    ▼
+_normalize_to_unit() ──▶ uint8 除以 255 / float 范围检查
+    │
+    ▼
+DataLoader ──▶ batch / shuffle / prefetch
+    │
+    ▼
+模型输入 [B, T, C, H, W]
+```
 
 ---
 
@@ -183,36 +201,36 @@ python inference.py \
 
 ### 训练参数
 
-| 参数 | 默认值 | 说明 |
-|---|---|---|
-| `--data_path` | 必填 | 数据集路径 |
-| `--dataset` | `mnist` | `mnist` / `radar` |
-| `--batch_size` | `8` | 批大小 |
-| `--epochs` | `100` | 训练轮数 |
-| `--input_length` | `10` | 输入帧数 |
-| `--total_length` | `20` | 序列总长 |
-| `--hidden_dim` | `[64,64,64,64]` | 每层隐藏通道(必须 uniform) |
-| `--kernel_size` | `3` | 卷积核(正奇数) |
-| `--lr` | `0.001` | 学习率 |
-| `--amp` | `False` | 启用 AMP |
-| `--amp_dtype` | `float16` | `float16` / `bfloat16` |
-| `--grad_ckpt` | `False` | 梯度重计算 |
-| `--compile` | `False` | torch.compile |
-| `--channels_last` | `False` | channels-last 格式(CUDA) |
-| `--resume` | `None` | 恢复 checkpoint |
+| 参数 | 默认值 | 说明 | 约束条件 |
+|---|---|---|---|
+| `--data_path` | 必填 | 数据集路径 | 存在且可读 |
+| `--dataset` | `mnist` | `mnist` / `radar` | 枚举值 |
+| `--batch_size` | `8` | 批大小 | `>= 1` |
+| `--epochs` | `100` | 训练轮数 | `>= 1` |
+| `--input_length` | `10` | 输入帧数 | `>= 1` |
+| `--total_length` | `20` | 序列总长 | `> input_length` |
+| `--hidden_dim` | `[64,64,64,64]` | 每层隐藏通道 | 必须 uniform |
+| `--kernel_size` | `3` | 卷积核 | 正奇数 |
+| `--lr` | `0.001` | 学习率 | `> 0` |
+| `--amp` | `False` | 启用 AMP | CUDA only |
+| `--amp_dtype` | `float16` | `float16` / `bfloat16` | 枚举值 |
+| `--grad_ckpt` | `False` | 梯度重计算 | 增加 1x 前向 |
+| `--compile` | `False` | torch.compile | 实验性 |
+| `--channels_last` | `False` | channels-last 格式 | CUDA only |
+| `--resume` | `None` | 恢复 checkpoint | 架构必须一致 |
 
 ### 推理参数
 
-| 参数 | 默认值 | 说明 |
-|---|---|---|
-| `--checkpoint` | 必填 | checkpoint 路径(`<=5 GiB`) |
-| `--input` | 必填 | 输入 `.npy` 文件 |
-| `--input_length` | `10` | 输入帧数 |
-| `--horizon` | `10` | 预测帧数(`1..100000`) |
-| `--device` | `cuda` | `cuda` / `cpu` |
-| `--use_cuda_graph` | `False` | CUDA Graphs 加速 |
-| `--precision` | `float32` | `float32` / `float16` |
-| `--benchmark` | `False` | 打印平均延迟 |
+| 参数 | 默认值 | 说明 | 约束条件 |
+|---|---|---|---|
+| `--checkpoint` | 必填 | checkpoint 路径 | `<= 5 GiB` |
+| `--input` | 必填 | 输入 `.npy` 文件 | 存在且可读 |
+| `--input_length` | `10` | 输入帧数 | `>= 1` |
+| `--horizon` | `10` | 预测帧数 | `1..100000` |
+| `--device` | `cuda` | `cuda` / `cpu` | - |
+| `--use_cuda_graph` | `False` | CUDA Graphs 加速 | CUDA only |
+| `--precision` | `float32` | `float32` / `float16` | fp16 需 CUDA |
+| `--benchmark` | `False` | 打印平均延迟 | - |
 
 ---
 
@@ -228,6 +246,48 @@ MIM_PyTorch/
 ├── visualization.py     # 可视化层:TensorBoard 与 tqdm 封装
 ├── requirements.txt     # 依赖声明
 └── tests/               # 测试套件
+```
+
+**架构概览:**
+
+![README 架构概览](assets/readme_architecture_overview.svg)
+
+```
+
+┌─────────────    依赖与配置     ─────────────┐
+│ requirements.txt / CLI args / checkpoint    │
+└──────────────────────────────────────────────┘
+                    ▼
+┌─────────────    dataset.py     ─────────────┐
+│ MovingMNIST / RadarEcho / _normalize_to_unit │
+│ get_dataloader() / recommend_num_workers()   │
+└──────────────────────────────────────────────┘
+                    ▼
+┌─────────────     train.py      ─────────────┐
+│ _validate_args() / train_one_epoch()         │
+│ evaluate() / AsyncCheckpointSaver            │
+│ _load_resume_checkpoint() / _check_resume_args │
+└──────────────────────────────────────────────┘
+                    ▼
+┌─────────────     mim.py        ─────────────┐
+│ TensorLayerNorm / SpatioTemporalLSTMCell    │
+│ MIMS / MIMBlock / MIMN / MIM                │
+│ sequence_to_channels_last()                  │
+└──────────────────────────────────────────────┘
+                    ▼
+┌───────────── inference.py      ─────────────┐
+│ infer_architecture() / load_model()          │
+│ predict() / CUDAGraphRunner / benchmark()    │
+└──────────────────────────────────────────────┘
+                    ▼
+┌─────────────  metrics.py       ─────────────┐
+│ batch_mse / batch_psnr / batch_ssim         │
+│ batch_mae / csi_score                        │
+└──────────────────────────────────────────────┘
+                    ▼
+┌───────────── visualization.py  ─────────────┐
+│ TBLogger / EpochProgress / make_video_grid  │
+└──────────────────────────────────────────────┘
 ```
 
 ---
@@ -333,6 +393,8 @@ MIM_PyTorch/
 ---
 
 ## 数据流与状态机
+
+![数据流与状态机](assets/readme_dataflow_state_machine.svg)
 
 ```text
 原始数据 (.npy / .npz)
